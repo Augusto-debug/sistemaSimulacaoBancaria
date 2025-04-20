@@ -1,0 +1,38 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+  
+.wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 50px;
+    height: 70px;
+    background-color: #282c34;
+    color: white;
+}
+
+.wrapper ul {
+    list-style-type: none;
+}
+
+.wrapper li {
+    text-align: center; 
+}
+
+.wrapper a {
+    color: white;
+    text-decoration: none;
+    font-size: 16px;
+    transition: all 0.3s ease;
+    display: inline-block;
+    padding: 5px 10px; 
+    width: 120px; 
+}
+
+.wrapper a:hover {
+    color: #61dafb; 
+    font-weight: bold;
+}

@@ -1,0 +1,23 @@
+.footer-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 15px 50px;
+    height: 50px;
+    background-color: #282c34;
+    color: white;
+
+    bottom: 0;
+    width: 100%;
+    text-align: center;
+}
+
+.footer-wrapper p {
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.footer-wrapper p:hover {
+    color: #61dafb;
+    transform: scale(1.05);
+}
