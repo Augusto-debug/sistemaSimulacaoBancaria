@@ -74,7 +74,7 @@ O sistema possui três entidades principais:
 ```properties
 spring.datasource.url=jdbc:mysql://localhost:3306/financeiro?createDatabaseIfNotExist=true
 spring.datasource.username=root
-spring.datasource.password=123456789
+spring.datasource.password=root
 ```
 
 ### Executando o Backend
