@@ -66,7 +66,8 @@ const Movimentacao = () => {
     if (formData.contaId) {
       const conta = contas.find(c => c.id === parseInt(formData.contaId));
       setContaSelecionada(conta);
-
+      // filtra as movimentações da conta selecionada e ordena por data
+      // do mais recente para o mais antigo
       const extrato = movimentacoes.filter(mov => 
         mov.conta.id === parseInt(formData.contaId)
       ).sort((a, b) => new Date(b.data) - new Date(a.data));
@@ -89,8 +90,9 @@ const Movimentacao = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let error = '';
-
+    // campo alterado usuario 
     if (name === 'usuarioId') {
+      //copia o objeto formData e altera o usuarioId e limpa o contaId
       setFormData({
         ...formData,
         usuarioId: value,
@@ -100,18 +102,21 @@ const Movimentacao = () => {
         ...formErrors,
         contaId: ''
       });
+      
     } else if (name === 'tipo') {
+      // copia o objeto formData e altera o tipo
       setFormData({
         ...formData,
         [name]: value
       });
-      
+      // verifica se o tipo é SAQUE e se o valor é maior que o saldo da conta selecionada
       if (value === 'SAQUE' && contaSelecionada && parseFloat(formData.valor || 0) > contaSelecionada.saldo) {
         setFormErrors({
           ...formErrors,
           valor: 'Saldo insuficiente para esta operação'
         });
       } else {
+        // se o tipo não for SAQUE ou o valor for menor que o saldo, limpa o erro
         setFormErrors({
           ...formErrors,
           valor: ''
@@ -125,17 +130,18 @@ const Movimentacao = () => {
       } else if (formData.tipo === 'SAQUE' && contaSelecionada && valorNumerico > contaSelecionada.saldo) {
         error = 'Saldo insuficiente para esta operação';
       }
-      
+      // se o valor for maior que zero, limpa o erro
       setFormData({
         ...formData,
         [name]: value
       });
-      
+      // se o valor for menor ou igual a zero, altera o erro
       setFormErrors({
         ...formErrors,
         valor: error
       });
     } else {
+      // copia o objeto formData e altera o campo correspondente ao name
       setFormData({
         ...formData,
         [name]: value
@@ -236,7 +242,6 @@ const Movimentacao = () => {
 
   const handleEdit = (movimentacao) => {
     const conta = contas.find(c => c.id === movimentacao.conta.id);
-    
     setFormData({
       id: movimentacao.id,
       usuarioId: conta ? conta.usuario.id.toString() : '',

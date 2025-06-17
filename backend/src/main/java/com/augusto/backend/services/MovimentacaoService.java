@@ -79,7 +79,6 @@ public class MovimentacaoService {
             movimentacao.setData(movimentacaoDetails.getData());
             return movimentacaoRepository.save(movimentacao);
         }
-
         return null;
     }
 }

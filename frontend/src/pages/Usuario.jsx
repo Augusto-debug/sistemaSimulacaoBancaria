@@ -92,7 +92,7 @@ const Usuario = () => {
 
     setFormData({
       ...formData,
-      [name]: newValue
+      [name]: newValue // [name] assume o valor da variável name na requisição.
     });
 
     setFormErrors({

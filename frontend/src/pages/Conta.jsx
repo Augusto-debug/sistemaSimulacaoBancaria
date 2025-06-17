@@ -97,7 +97,7 @@ const Conta = () => {
     }
 
     setFormErrors(errors);
-    return !Object.values(errors).some(error => error);
+    return !Object.values(errors).some(error => error); // retorna true se não houver erros e false se houver pelo menos um erro
   };
 
   const handleSubmit = async (e) => {
