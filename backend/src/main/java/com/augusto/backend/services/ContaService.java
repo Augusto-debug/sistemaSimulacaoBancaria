@@ -2,8 +2,10 @@ package com.augusto.backend.services;
 
 import com.augusto.backend.domain.Conta;
 import com.augusto.backend.domain.Usuario;
+import com.augusto.backend.exception.ResourceNotFoundException;
 import com.augusto.backend.repository.ContaRepository;
 import com.augusto.backend.repository.UsuarioRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -13,9 +15,10 @@ import java.util.Optional;
 @Service
 public class ContaService {
 
-    private ContaRepository contaRepository;
-    private UsuarioRepository usuarioRepository;
+    private final ContaRepository contaRepository;
+    private final UsuarioRepository usuarioRepository;
 
+    @Autowired
     public ContaService(ContaRepository contaRepository, UsuarioRepository usuarioRepository) {
         this.contaRepository = contaRepository;
         this.usuarioRepository = usuarioRepository;
@@ -26,54 +29,124 @@ public class ContaService {
     }
 
     public Optional<Conta> findById(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID deve ser um número positivo");
+        }
         return contaRepository.findById(id);
     }
 
+    public Conta findByIdOrThrow(Long id) {
+        return findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Conta não encontrada com ID: " + id));
+    }
+
     public List<Conta> findByUsuarioId(Long usuarioId) {
+        if (usuarioId == null || usuarioId <= 0) {
+            throw new IllegalArgumentException("ID do usuário deve ser um número positivo");
+        }
         return contaRepository.findByUsuarioId(usuarioId);
     }
 
     public Conta save(Conta conta) {
+        if (conta == null) {
+            throw new IllegalArgumentException("Conta não pode ser nula");
+        }
+        
         if (conta.getSaldo() == null) {
             conta.setSaldo(BigDecimal.ZERO);
         }
+        
+        validarNumeroConta(conta.getNumeroConta(), conta.getId());
+        
         return contaRepository.save(conta);
     }
 
     public void deleteById(Long id) {
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID deve ser um número positivo");
+        }
+        
+        // Verificar se a conta existe antes de deletar
+        if (!contaRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Conta não encontrada com ID: " + id);
+        }
+        
         contaRepository.deleteById(id);
     }
 
     public Conta update(Long id, Conta contaDetails) {
-        Optional<Conta> optionalConta = contaRepository.findById(id);
-        if (optionalConta.isPresent()) {
-            Conta conta = optionalConta.get();
-            conta.setNumeroConta(contaDetails.getNumeroConta());
-            return contaRepository.save(conta);
+        if (id == null || id <= 0) {
+            throw new IllegalArgumentException("ID deve ser um número positivo");
         }
-        return null;
+        
+        if (contaDetails == null) {
+            throw new IllegalArgumentException("Dados da conta não podem ser nulos");
+        }
+
+        Conta conta = findByIdOrThrow(id);
+        
+        // Validar novo número da conta se foi alterado
+        if (!conta.getNumeroConta().equals(contaDetails.getNumeroConta())) {
+            validarNumeroConta(contaDetails.getNumeroConta(), id);
+        }
+        
+        conta.setNumeroConta(contaDetails.getNumeroConta());
+        
+        return contaRepository.save(conta);
     }
 
     public Conta createConta(Long usuarioId, String numeroConta) {
-        Optional<Usuario> optionalUsuario = usuarioRepository.findById(usuarioId);
-        if (optionalUsuario.isPresent()) {
-            Usuario usuario = optionalUsuario.get();
-            Conta novaConta = new Conta();
-            novaConta.setUsuario(usuario);
-            novaConta.setNumeroConta(numeroConta);
-            novaConta.setSaldo(BigDecimal.ZERO);
-            return contaRepository.save(novaConta);
+        if (usuarioId == null || usuarioId <= 0) {
+            throw new IllegalArgumentException("ID do usuário deve ser um número positivo");
         }
-        return null;
+        
+        if (numeroConta == null || numeroConta.trim().isEmpty()) {
+            throw new IllegalArgumentException("Número da conta é obrigatório");
+        }
+        
+        // Validar se o usuário existe
+        Usuario usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com ID: " + usuarioId));
+        
+        // Validar se o número da conta já existe
+        validarNumeroConta(numeroConta, null);
+        
+        Conta novaConta = new Conta();
+        novaConta.setUsuario(usuario);
+        novaConta.setNumeroConta(numeroConta.trim());
+        novaConta.setSaldo(BigDecimal.ZERO);
+        
+        return contaRepository.save(novaConta);
     }
 
     public Conta atualizarSaldo(Long contaId, BigDecimal valor) {
-        Optional<Conta> optionalConta = contaRepository.findById(contaId);
-        if (optionalConta.isPresent()) {
-            Conta conta = optionalConta.get();
-            conta.setSaldo(valor);
-            return contaRepository.save(conta);
+        if (contaId == null || contaId <= 0) {
+            throw new IllegalArgumentException("ID da conta deve ser um número positivo");
         }
-        return null;
+        
+        if (valor == null) {
+            throw new IllegalArgumentException("Valor não pode ser nulo");
+        }
+
+        Conta conta = findByIdOrThrow(contaId);
+        conta.setSaldo(valor);
+        
+        return contaRepository.save(conta);
+    }
+    
+    private void validarNumeroConta(String numeroConta, Long contaIdExcluir) {
+        if (numeroConta == null || numeroConta.trim().isEmpty()) {
+            throw new IllegalArgumentException("Número da conta é obrigatório");
+        }
+        
+        // Verificar se já existe uma conta com este número (exceto a própria conta em caso de atualização)
+        List<Conta> contasExistentes = contaRepository.findAll();
+        boolean numeroJaExiste = contasExistentes.stream()
+                .anyMatch(conta -> conta.getNumeroConta().equals(numeroConta.trim()) && 
+                         (contaIdExcluir == null || !conta.getId().equals(contaIdExcluir)));
+        
+        if (numeroJaExiste) {
+            throw new IllegalArgumentException("Já existe uma conta com o número: " + numeroConta);
+        }
     }
 }
