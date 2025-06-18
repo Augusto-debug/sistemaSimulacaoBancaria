@@ -2,7 +2,6 @@ import { http, HttpResponse } from 'msw'
 
 const API_URL = 'http://localhost:8080/api'
 
-// Dados de mock
 const mockUsuarios = [
   { id: 1, nome: 'João Silva', cpf: '12345678901', endereco: 'Rua A, 123' },
   { id: 2, nome: 'Maria Santos', cpf: '98765432109', endereco: 'Rua B, 456' }
@@ -19,7 +18,6 @@ const mockMovimentacoes = [
 ]
 
 export const handlers = [
-  // Usuários
   http.get(`${API_URL}/usuarios`, () => {
     return HttpResponse.json(mockUsuarios)
   }),
@@ -67,7 +65,6 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 })
   }),
 
-  // Contas
   http.get(`${API_URL}/contas`, () => {
     return HttpResponse.json(mockContas)
   }),
@@ -129,7 +126,6 @@ export const handlers = [
     return new HttpResponse(null, { status: 404 })
   }),
 
-  // Movimentações
   http.get(`${API_URL}/movimentacoes`, () => {
     return HttpResponse.json(mockMovimentacoes)
   }),

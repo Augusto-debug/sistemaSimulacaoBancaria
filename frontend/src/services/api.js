@@ -3,177 +3,151 @@ import axios from 'axios';
 const API_URL = 'http://localhost:8080/api';
 
 const api = {
-  getUsuarios: async () => {
-    try {
-      const response = await axios.get(`${API_URL}/usuarios`);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar usuários:', error);
-      throw error;
+  async getUsuarios() {
+    const response = await fetch(`${API_URL}/usuarios`);
+    if (!response.ok) {
+      throw new Error('Erro ao buscar usuários');
     }
+    return response.json();
   },
-  
-  getUsuarioById: async (id) => {
-    try {
-      const response = await axios.get(`${API_URL}/usuarios/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao buscar usuário com ID ${id}:`, error);
-      throw error;
+
+  async getUsuarioById(id) {
+    const response = await fetch(`${API_URL}/usuarios/${id}`);
+    if (!response.ok) {
+      throw new Error('Erro ao buscar usuário');
     }
+    return response.json();
   },
-  
-  createUsuario: async (usuarioData) => {
-    try {
-      const response = await axios.post(`${API_URL}/usuarios`, usuarioData);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao criar usuário:', error);
-      throw error;
+
+  async createUsuario(usuario) {
+    const response = await fetch(`${API_URL}/usuarios`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(usuario),
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao criar usuário');
     }
+    return response.json();
   },
-  
-  updateUsuario: async (id, usuarioData) => {
-    try {
-      const response = await axios.put(`${API_URL}/usuarios/${id}`, usuarioData);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao atualizar usuário com ID ${id}:`, error);
-      throw error;
+
+  async updateUsuario(id, usuario) {
+    const response = await fetch(`${API_URL}/usuarios/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(usuario),
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao atualizar usuário');
     }
+    return response.json();
   },
-  
-  deleteUsuario: async (id) => {
-    try {
-      await axios.delete(`${API_URL}/usuarios/${id}`);
-      return true;
-    } catch (error) {
-      console.error(`Erro ao excluir usuário com ID ${id}:`, error);
-      throw error;
+
+  async deleteUsuario(id) {
+    const response = await fetch(`${API_URL}/usuarios/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao deletar usuário');
     }
+    return true;
   },
-  
-  // Contas
-  getContas: async () => {
-    try {
-      const response = await axios.get(`${API_URL}/contas`);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar contas:', error);
-      throw error;
+
+  async getContas() {
+    const response = await fetch(`${API_URL}/contas`);
+    if (!response.ok) {
+      throw new Error('Erro ao buscar contas');
     }
+    return response.json();
   },
-  
-  getContaById: async (id) => {
-    try {
-      const response = await axios.get(`${API_URL}/contas/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao buscar conta com ID ${id}:`, error);
-      throw error;
+
+  async getContaById(id) {
+    const response = await fetch(`${API_URL}/contas/${id}`);
+    if (!response.ok) {
+      throw new Error('Erro ao buscar conta');
     }
+    return response.json();
   },
-  
-  getContasByUsuarioId: async (usuarioId) => {
-    try {
-      const response = await axios.get(`${API_URL}/contas/usuario/${usuarioId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao buscar contas do usuário com ID ${usuarioId}:`, error);
-      throw error;
+
+  async getContasByUsuarioId(usuarioId) {
+    const response = await fetch(`${API_URL}/contas/usuario/${usuarioId}`);
+    if (!response.ok) {
+      throw new Error('Erro ao buscar contas do usuário');
     }
+    return response.json();
   },
-  
-  createConta: async (contaData) => {
-    try {
-      const response = await axios.post(`${API_URL}/contas`, contaData);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao criar conta:', error);
-      throw error;
+
+  async createConta(conta) {
+    const response = await fetch(`${API_URL}/contas`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(conta),
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao criar conta');
     }
+    return response.json();
   },
-  
-  updateConta: async (id, contaData) => {
-    try {
-      const response = await axios.put(`${API_URL}/contas/${id}`, contaData);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao atualizar conta com ID ${id}:`, error);
-      throw error;
+
+  async updateConta(id, conta) {
+    const response = await fetch(`${API_URL}/contas/${id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(conta),
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao atualizar conta');
     }
+    return response.json();
   },
-  
-  deleteConta: async (id) => {
-    try {
-      await axios.delete(`${API_URL}/contas/${id}`);
-      return true;
-    } catch (error) {
-      console.error(`Erro ao excluir conta com ID ${id}:`, error);
-      throw error;
+
+  async deleteConta(id) {
+    const response = await fetch(`${API_URL}/contas/${id}`, {
+      method: 'DELETE',
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao deletar conta');
     }
+    return true;
   },
-  
-  // Movimentações
-  getMovimentacoes: async () => {
-    try {
-      const response = await axios.get(`${API_URL}/movimentacoes`);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao buscar movimentações:', error);
-      throw error;
+
+  async getMovimentacoes() {
+    const response = await fetch(`${API_URL}/movimentacoes`);
+    if (!response.ok) {
+      throw new Error('Erro ao buscar movimentações');
     }
+    return response.json();
   },
-  
-  getMovimentacaoById: async (id) => {
-    try {
-      const response = await axios.get(`${API_URL}/movimentacoes/${id}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao buscar movimentação com ID ${id}:`, error);
-      throw error;
+
+  async getMovimentacoesByContaId(contaId) {
+    const response = await fetch(`${API_URL}/movimentacoes/conta/${contaId}`);
+    if (!response.ok) {
+      throw new Error('Erro ao buscar movimentações da conta');
     }
+    return response.json();
   },
-  
-  getMovimentacoesByContaId: async (contaId) => {
-    try {
-      const response = await axios.get(`${API_URL}/movimentacoes/conta/${contaId}`);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao buscar movimentações da conta com ID ${contaId}:`, error);
-      throw error;
+
+  async createMovimentacao(movimentacao) {
+    const response = await fetch(`${API_URL}/movimentacoes`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(movimentacao),
+    });
+    if (!response.ok) {
+      throw new Error('Erro ao criar movimentação');
     }
+    return response.json();
   },
-  
-  createMovimentacao: async (movimentacaoData) => {
-    try {
-      const response = await axios.post(`${API_URL}/movimentacoes`, movimentacaoData);
-      return response.data;
-    } catch (error) {
-      console.error('Erro ao criar movimentação:', error);
-      throw error;
-    }
-  },
-  
-  updateMovimentacao: async (id, movimentacaoData) => {
-    try {
-      const response = await axios.put(`${API_URL}/movimentacoes/${id}`, movimentacaoData);
-      return response.data;
-    } catch (error) {
-      console.error(`Erro ao atualizar movimentação com ID ${id}:`, error);
-      throw error;
-    }
-  },
-  
-  deleteMovimentacao: async (id) => {
-    try {
-      await axios.delete(`${API_URL}/movimentacoes/${id}`);
-      return true;
-    } catch (error) {
-      console.error(`Erro ao excluir movimentação com ID ${id}:`, error);
-      throw error;
-    }
-  }
 };
 
 export default api;

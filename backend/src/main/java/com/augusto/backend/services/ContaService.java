@@ -66,7 +66,6 @@ public class ContaService {
             throw new IllegalArgumentException("ID deve ser um número positivo");
         }
         
-        // Verificar se a conta existe antes de deletar
         if (!contaRepository.existsById(id)) {
             throw new ResourceNotFoundException("Conta não encontrada com ID: " + id);
         }
@@ -85,7 +84,6 @@ public class ContaService {
 
         Conta conta = findByIdOrThrow(id);
         
-        // Validar novo número da conta se foi alterado
         if (!conta.getNumeroConta().equals(contaDetails.getNumeroConta())) {
             validarNumeroConta(contaDetails.getNumeroConta(), id);
         }
@@ -104,11 +102,9 @@ public class ContaService {
             throw new IllegalArgumentException("Número da conta é obrigatório");
         }
         
-        // Validar se o usuário existe
         Usuario usuario = usuarioRepository.findById(usuarioId)
                 .orElseThrow(() -> new ResourceNotFoundException("Usuário não encontrado com ID: " + usuarioId));
         
-        // Validar se o número da conta já existe
         validarNumeroConta(numeroConta, null);
         
         Conta novaConta = new Conta();
@@ -139,7 +135,6 @@ public class ContaService {
             throw new IllegalArgumentException("Número da conta é obrigatório");
         }
         
-        // Verificar se já existe uma conta com este número (exceto a própria conta em caso de atualização)
         List<Conta> contasExistentes = contaRepository.findAll();
         boolean numeroJaExiste = contasExistentes.stream()
                 .anyMatch(conta -> conta.getNumeroConta().equals(numeroConta.trim()) && 

@@ -72,7 +72,6 @@ public class GlobalExceptionHandler {
         errors.put("error", "Erro interno do servidor");
         errors.put("message", "Um erro inesperado ocorreu. Tente novamente mais tarde.");
         
-        // Log do erro para debug (em produção usar um logger adequado)
         ex.printStackTrace();
         
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(errors);

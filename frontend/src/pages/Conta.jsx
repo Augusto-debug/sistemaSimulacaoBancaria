@@ -42,16 +42,14 @@ const Conta = () => {
       });
   }, []);
 
-  // Função para formatar CPF com máscara xxx.xxx.xxx-xx
   const formatCPF = (cpf) => {
-    cpf = cpf.replace(/\D/g, ''); // Remove caracteres não numéricos
+    cpf = cpf.replace(/\D/g, '');
     return cpf
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d)/, '$1.$2')
       .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
   };
 
-  // Verifica se o número da conta já existe
   const contaJaExiste = (numeroConta) => {
     return contas.some(conta => 
       conta.numeroConta === numeroConta && 
@@ -65,10 +63,8 @@ const Conta = () => {
     let error = '';
 
     if (name === 'numeroConta') {
-      // Aceita apenas números
       newValue = value.replace(/\D/g, '');
       
-      // Verifica se o número da conta já existe
       if (contaJaExiste(newValue)) {
         error = 'Este número de conta já está em uso';
       }
@@ -97,7 +93,7 @@ const Conta = () => {
     }
 
     setFormErrors(errors);
-    return !Object.values(errors).some(error => error); // retorna true se não houver erros e false se houver pelo menos um erro
+    return !Object.values(errors).some(error => error);
   };
 
   const handleSubmit = async (e) => {
@@ -200,15 +196,14 @@ const Conta = () => {
               {formErrors.numeroConta && <div className="error-text">{formErrors.numeroConta}</div>}
             </div>
             
-            <div className="form-buttons">
-              <button type="submit" className="btn-submit">
+            <div className="form-group button-group">
+              <button type="submit" className="submit-btn">
                 {editMode ? 'Atualizar' : 'Cadastrar'}
               </button>
-              
               {editMode && (
                 <button 
                   type="button" 
-                  className="btn-cancel"
+                  className="cancel-btn"
                   onClick={() => {
                     setFormData({ id: null, usuarioId: '', numeroConta: '', saldo: 0 });
                     setFormErrors({ numeroConta: '' });
@@ -221,17 +216,16 @@ const Conta = () => {
             </div>
           </form>
         </section>
-        
-        <section className="contas-container">
-          <h2>Contas Cadastradas</h2>
+
+        <section className="table-container">
+          <h2>Lista de Contas</h2>
           {loading ? (
-            <p>Carregando contas...</p>
-          ) : contas.length === 0 ? (
-            <p>Nenhuma conta cadastrada.</p>
+            <div className="loading-message">Carregando contas...</div>
           ) : (
             <table className="contas-table">
               <thead>
                 <tr>
+                  <th>ID</th>
                   <th>Cliente</th>
                   <th>CPF</th>
                   <th>Número da Conta</th>
@@ -240,34 +234,41 @@ const Conta = () => {
                 </tr>
               </thead>
               <tbody>
-                {contas.map((conta) => (
-                  <tr key={conta.id}>
-                    <td>{conta.usuario.nome}</td>
-                    <td>{formatCPF(conta.usuario.cpf)}</td>
-                    <td>{conta.numeroConta}</td>
-                    <td>R$ {conta.saldo.toFixed(2)}</td>
-                    <td className="actions">
-                      <button 
-                        className="btn-edit"
-                        onClick={() => handleEdit(conta)}
-                      >
-                        Editar
-                      </button>
-                      <button 
-                        className="btn-delete"
-                        onClick={() => handleRemove(conta.id)}
-                      >
-                        Remover
-                      </button>
-                    </td>
+                {contas.length === 0 ? (
+                  <tr>
+                    <td colSpan="6" className="no-data">Nenhuma conta encontrada</td>
                   </tr>
-                ))}
+                ) : (
+                  contas.map(conta => (
+                    <tr key={conta.id}>
+                      <td>{conta.id}</td>
+                      <td>{conta.usuario.nome}</td>
+                      <td>{formatCPF(conta.usuario.cpf)}</td>
+                      <td>{conta.numeroConta}</td>
+                      <td>R$ {parseFloat(conta.saldo).toFixed(2)}</td>
+                      <td>
+                        <button 
+                          className="edit-btn"
+                          onClick={() => handleEdit(conta)}
+                        >
+                          Editar
+                        </button>
+                        <button 
+                          className="delete-btn"
+                          onClick={() => handleRemove(conta.id)}
+                        >
+                          Excluir
+                        </button>
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
           )}
         </section>
       </main>
-
+      
       <Footer />
     </div>
   );

@@ -71,10 +71,8 @@ class ContaControllerTest {
     @Test
     @DisplayName("GET /api/contas - Deve retornar todas as contas")
     void getAllContas_DeveRetornarTodasAsContas() throws Exception {
-        // Given
         when(contaService.findAll()).thenReturn(contasList);
 
-        // When & Then
         mockMvc.perform(get("/api/contas"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -90,10 +88,8 @@ class ContaControllerTest {
     @Test
     @DisplayName("GET /api/contas/{id} - Deve retornar conta por ID")
     void getContaById_DeveRetornarContaPorId() throws Exception {
-        // Given
         when(contaService.findById(1L)).thenReturn(Optional.of(contaTeste));
 
-        // When & Then
         mockMvc.perform(get("/api/contas/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -107,10 +103,8 @@ class ContaControllerTest {
     @Test
     @DisplayName("GET /api/contas/{id} - Deve retornar 404 para conta inexistente")
     void getContaById_DeveRetornar404ParaContaInexistente() throws Exception {
-        // Given
         when(contaService.findById(999L)).thenReturn(Optional.empty());
 
-        // When & Then
         mockMvc.perform(get("/api/contas/999"))
                 .andExpect(status().isNotFound());
 
@@ -120,10 +114,8 @@ class ContaControllerTest {
     @Test
     @DisplayName("GET /api/contas/usuario/{usuarioId} - Deve retornar contas por usuário")
     void getContasByUsuarioId_DeveRetornarContasPorUsuario() throws Exception {
-        // Given
         when(contaService.findByUsuarioId(1L)).thenReturn(contasList);
 
-        // When & Then
         mockMvc.perform(get("/api/contas/usuario/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON))
@@ -135,11 +127,9 @@ class ContaControllerTest {
     @Test
     @DisplayName("POST /api/contas - Deve criar nova conta")
     void createConta_DeveCriarNovaConta() throws Exception {
-        // Given
         ContaRequestDTO request = new ContaRequestDTO(1L, "999999");
         when(contaService.createConta(1L, "999999")).thenReturn(contaTeste);
 
-        // When & Then
         mockMvc.perform(post("/api/contas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -154,7 +144,6 @@ class ContaControllerTest {
     @Test
     @DisplayName("PUT /api/contas/{id} - Deve atualizar conta")
     void updateConta_DeveAtualizarConta() throws Exception {
-        // Given
         ContaUpdateDTO request = new ContaUpdateDTO("888888");
         Conta contaMapeada = new Conta();
         contaMapeada.setNumeroConta("888888");
@@ -162,7 +151,6 @@ class ContaControllerTest {
         when(contaMapper.updateDtoToEntity(any(ContaUpdateDTO.class))).thenReturn(contaMapeada);
         when(contaService.update(eq(1L), any(Conta.class))).thenReturn(contaTeste);
 
-        // When & Then
         mockMvc.perform(put("/api/contas/1")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))
@@ -177,10 +165,8 @@ class ContaControllerTest {
     @Test
     @DisplayName("DELETE /api/contas/{id} - Deve deletar conta")
     void deleteConta_DeveDeletarConta() throws Exception {
-        // Given
         doNothing().when(contaService).deleteById(1L);
 
-        // When & Then
         mockMvc.perform(delete("/api/contas/1"))
                 .andExpect(status().isNoContent());
 
@@ -190,10 +176,8 @@ class ContaControllerTest {
     @Test
     @DisplayName("GET /api/contas/{id} - Deve lidar com ID inválido")
     void getContaById_DeveLidarComIdInvalido() throws Exception {
-        // Given
         when(contaService.findById(-1L)).thenThrow(new IllegalArgumentException("ID deve ser um número positivo"));
 
-        // When & Then
         mockMvc.perform(get("/api/contas/-1"))
                 .andExpect(status().isBadRequest());
     }
@@ -201,10 +185,8 @@ class ContaControllerTest {
     @Test
     @DisplayName("POST /api/contas - Deve validar dados obrigatórios")
     void createConta_DeveValidarDadosObrigatorios() throws Exception {
-        // Given
         ContaRequestDTO request = new ContaRequestDTO(null, "123456");
 
-        // When & Then
         mockMvc.perform(post("/api/contas")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(request)))

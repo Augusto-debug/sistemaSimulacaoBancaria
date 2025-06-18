@@ -66,8 +66,6 @@ const Movimentacao = () => {
     if (formData.contaId) {
       const conta = contas.find(c => c.id === parseInt(formData.contaId));
       setContaSelecionada(conta);
-      // filtra as movimentações da conta selecionada e ordena por data
-      // do mais recente para o mais antigo
       const extrato = movimentacoes.filter(mov => 
         mov.conta.id === parseInt(formData.contaId)
       ).sort((a, b) => new Date(b.data) - new Date(a.data));
@@ -90,9 +88,7 @@ const Movimentacao = () => {
   const handleChange = (e) => {
     const { name, value } = e.target;
     let error = '';
-    // campo alterado usuario 
     if (name === 'usuarioId') {
-      //copia o objeto formData e altera o usuarioId e limpa o contaId
       setFormData({
         ...formData,
         usuarioId: value,

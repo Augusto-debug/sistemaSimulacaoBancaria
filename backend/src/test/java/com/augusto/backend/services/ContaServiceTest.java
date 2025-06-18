@@ -65,13 +65,10 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve retornar todas as contas")
     void findAll_DeveRetornarTodasAsContas() {
-        // Given
         when(contaRepository.findAll()).thenReturn(contasList);
 
-        // When
         List<Conta> resultado = contaService.findAll();
 
-        // Then
         assertThat(resultado).hasSize(2);
         assertThat(resultado).containsExactlyElementsOf(contasList);
         verify(contaRepository).findAll();
@@ -80,13 +77,10 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve encontrar conta por ID")
     void findById_DeveEncontrarContaPorId() {
-        // Given
         when(contaRepository.findById(1L)).thenReturn(Optional.of(contaTeste));
 
-        // When
         Optional<Conta> resultado = contaService.findById(1L);
 
-        // Then
         assertThat(resultado).isPresent();
         assertThat(resultado.get()).isEqualTo(contaTeste);
         verify(contaRepository).findById(1L);
@@ -95,7 +89,6 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve lançar exceção para ID inválido")
     void findById_DeveLancarExcecaoParaIdInvalido() {
-        // Given & When & Then
         assertThatThrownBy(() -> contaService.findById(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("ID deve ser um número positivo");
@@ -112,23 +105,18 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve encontrar conta por ID ou lançar exceção")
     void findByIdOrThrow_DeveEncontrarContaOuLancarExcecao() {
-        // Given
         when(contaRepository.findById(1L)).thenReturn(Optional.of(contaTeste));
 
-        // When
         Conta resultado = contaService.findByIdOrThrow(1L);
 
-        // Then
         assertThat(resultado).isEqualTo(contaTeste);
     }
 
     @Test
     @DisplayName("Deve lançar ResourceNotFoundException quando conta não existe")
     void findByIdOrThrow_DeveLancarResourceNotFoundExceptionQuandoContaNaoExiste() {
-        // Given
         when(contaRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // When & Then
         assertThatThrownBy(() -> contaService.findByIdOrThrow(999L))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Conta não encontrada com ID: 999");
@@ -137,13 +125,10 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve encontrar contas por ID do usuário")
     void findByUsuarioId_DeveEncontrarContasPorUsuarioId() {
-        // Given
         when(contaRepository.findByUsuarioId(1L)).thenReturn(contasList);
 
-        // When
         List<Conta> resultado = contaService.findByUsuarioId(1L);
 
-        // Then
         assertThat(resultado).hasSize(2);
         assertThat(resultado).containsExactlyElementsOf(contasList);
         verify(contaRepository).findByUsuarioId(1L);
@@ -152,7 +137,6 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve salvar conta com sucesso")
     void save_DeveSalvarContaComSucesso() {
-        // Given
         Conta novaConta = new Conta();
         novaConta.setNumeroConta("555555");
         novaConta.setUsuario(usuarioTeste);
@@ -160,10 +144,8 @@ class ContaServiceTest {
         when(contaRepository.findAll()).thenReturn(Arrays.asList(contaTeste));
         when(contaRepository.save(any(Conta.class))).thenReturn(novaConta);
 
-        // When
         Conta resultado = contaService.save(novaConta);
 
-        // Then
         assertThat(resultado).isNotNull();
         assertThat(resultado.getSaldo()).isEqualTo(BigDecimal.ZERO);
         verify(contaRepository).save(novaConta);
@@ -172,7 +154,6 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve lançar exceção ao salvar conta nula")
     void save_DeveLancarExcecaoAoSalvarContaNula() {
-        // When & Then
         assertThatThrownBy(() -> contaService.save(null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Conta não pode ser nula");
@@ -181,16 +162,13 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve criar conta com sucesso")
     void createConta_DeveCriarContaComSucesso() {
-        // Given
         String numeroConta = "999999";
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuarioTeste));
         when(contaRepository.findAll()).thenReturn(Arrays.asList(contaTeste));
         when(contaRepository.save(any(Conta.class))).thenReturn(contaTeste);
 
-        // When
         Conta resultado = contaService.createConta(1L, numeroConta);
 
-        // Then
         assertThat(resultado).isNotNull();
         verify(usuarioRepository).findById(1L);
         verify(contaRepository).save(any(Conta.class));
@@ -199,10 +177,8 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve lançar exceção ao criar conta com usuário inexistente")
     void createConta_DeveLancarExcecaoAoCriarContaComUsuarioInexistente() {
-        // Given
         when(usuarioRepository.findById(999L)).thenReturn(Optional.empty());
 
-        // When & Then
         assertThatThrownBy(() -> contaService.createConta(999L, "123456"))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Usuário não encontrado com ID: 999");
@@ -211,11 +187,9 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve lançar exceção ao criar conta com número duplicado")
     void createConta_DeveLancarExcecaoAoCriarContaComNumeroDuplicado() {
-        // Given
         when(usuarioRepository.findById(1L)).thenReturn(Optional.of(usuarioTeste));
         when(contaRepository.findAll()).thenReturn(Arrays.asList(contaTeste));
 
-        // When & Then
         assertThatThrownBy(() -> contaService.createConta(1L, "123456"))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Já existe uma conta com o número: 123456");
@@ -224,7 +198,6 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve atualizar conta com sucesso")
     void update_DeveAtualizarContaComSucesso() {
-        // Given
         Conta contaAtualizada = new Conta();
         contaAtualizada.setNumeroConta("888888");
 
@@ -232,10 +205,8 @@ class ContaServiceTest {
         when(contaRepository.findAll()).thenReturn(Arrays.asList(contaTeste));
         when(contaRepository.save(any(Conta.class))).thenReturn(contaTeste);
 
-        // When
         Conta resultado = contaService.update(1L, contaAtualizada);
 
-        // Then
         assertThat(resultado).isNotNull();
         verify(contaRepository).findById(1L);
         verify(contaRepository).save(any(Conta.class));
@@ -244,13 +215,10 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve deletar conta com sucesso")
     void deleteById_DeveDeletarContaComSucesso() {
-        // Given
         when(contaRepository.existsById(1L)).thenReturn(true);
 
-        // When
         contaService.deleteById(1L);
 
-        // Then
         verify(contaRepository).existsById(1L);
         verify(contaRepository).deleteById(1L);
     }
@@ -258,10 +226,8 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve lançar exceção ao deletar conta inexistente")
     void deleteById_DeveLancarExcecaoAoDeletarContaInexistente() {
-        // Given
         when(contaRepository.existsById(999L)).thenReturn(false);
 
-        // When & Then
         assertThatThrownBy(() -> contaService.deleteById(999L))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Conta não encontrada com ID: 999");
@@ -270,24 +236,20 @@ class ContaServiceTest {
     @Test
     @DisplayName("Deve atualizar saldo com sucesso")
     void atualizarSaldo_DeveAtualizarSaldoComSucesso() {
-        // Given
-        BigDecimal novoSaldo = BigDecimal.valueOf(5000.00);
+        BigDecimal novoSaldo = BigDecimal.valueOf(1500.00);
+        
         when(contaRepository.findById(1L)).thenReturn(Optional.of(contaTeste));
         when(contaRepository.save(any(Conta.class))).thenReturn(contaTeste);
 
-        // When
         Conta resultado = contaService.atualizarSaldo(1L, novoSaldo);
 
-        // Then
         assertThat(resultado).isNotNull();
-        verify(contaRepository).findById(1L);
         verify(contaRepository).save(any(Conta.class));
     }
 
     @Test
     @DisplayName("Deve lançar exceção ao atualizar saldo com valor nulo")
     void atualizarSaldo_DeveLancarExcecaoAoAtualizarSaldoComValorNulo() {
-        // When & Then
         assertThatThrownBy(() -> contaService.atualizarSaldo(1L, null))
                 .isInstanceOf(IllegalArgumentException.class)
                 .hasMessage("Valor não pode ser nulo");

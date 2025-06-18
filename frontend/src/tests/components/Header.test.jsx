@@ -8,7 +8,7 @@ const RouterWrapper = ({ children }) => (
   <BrowserRouter>{children}</BrowserRouter>
 )
 
-describe('Componente Header', () => {
+describe('Header Component', () => {
   it('deve renderizar o título corretamente', () => {
     render(
       <RouterWrapper>
@@ -26,25 +26,25 @@ describe('Componente Header', () => {
       </RouterWrapper>
     )
     
-    expect(screen.getByText('Usuários')).toBeInTheDocument()
-    expect(screen.getByText('Contas')).toBeInTheDocument()
-    expect(screen.getByText('Movimentações')).toBeInTheDocument()
+    expect(screen.getByText('Pessoa')).toBeInTheDocument()
+    expect(screen.getByText('Conta')).toBeInTheDocument()
+    expect(screen.getByText('Movimentação')).toBeInTheDocument()
   })
 
-  it('deve ter links com href corretos', () => {
+  it('deve ter links funcionais', () => {
     render(
       <RouterWrapper>
         <Header />
       </RouterWrapper>
     )
     
-    const linkUsuarios = screen.getByRole('link', { name: 'Usuários' })
-    const linkContas = screen.getByRole('link', { name: 'Contas' })
-    const linkMovimentacoes = screen.getByRole('link', { name: 'Movimentações' })
+    const pessoaLink = screen.getByText('Pessoa').closest('a')
+    const contaLink = screen.getByText('Conta').closest('a')
+    const movimentacaoLink = screen.getByText('Movimentação').closest('a')
     
-    expect(linkUsuarios).toHaveAttribute('href', '/usuarios')
-    expect(linkContas).toHaveAttribute('href', '/contas')
-    expect(linkMovimentacoes).toHaveAttribute('href', '/movimentacoes')
+    expect(pessoaLink).toHaveAttribute('href', '/Usuario')
+    expect(contaLink).toHaveAttribute('href', '/Conta')
+    expect(movimentacaoLink).toHaveAttribute('href', '/Movimentacao')
   })
 
   it('deve ter a estrutura HTML correta', () => {

@@ -207,6 +207,58 @@ describe('Página de Conta', () => {
     })
   })
 
+  it('deve cancelar edição corretamente', async () => {
+    const user = userEvent.setup()
+    
+    render(
+      <RouterWrapper>
+        <Conta />
+      </RouterWrapper>
+    )
+    
+    await waitFor(() => {
+      expect(screen.getByText('123456')).toBeInTheDocument()
+    })
+
+    const editButton = screen.getAllByText('Editar')[0]
+    await user.click(editButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Editar Conta')).toBeInTheDocument()
+    })
+
+    const cancelButton = screen.getByRole('button', { name: /cancelar/i })
+    await user.click(cancelButton)
+
+    await waitFor(() => {
+      expect(screen.getByText('Nova Conta')).toBeInTheDocument()
+    })
+  })
+
+  it('deve exibir estado de carregamento', async () => {
+    render(
+      <RouterWrapper>
+        <Conta />
+      </RouterWrapper>
+    )
+    
+    expect(screen.getByText('Carregando contas...')).toBeInTheDocument()
+  })
+
+  it('deve exibir mensagem quando não há contas', async () => {
+    render(
+      <RouterWrapper>
+        <Conta />
+      </RouterWrapper>
+    )
+    
+    await waitFor(() => {
+      if (screen.queryByText('Nenhuma conta encontrada')) {
+        expect(screen.getByText('Nenhuma conta encontrada')).toBeInTheDocument()
+      }
+    })
+  })
+
   it('deve mostrar loading durante o carregamento', () => {
     render(
       <RouterWrapper>

@@ -41,7 +41,6 @@ const Usuario = () => {
     }
   };
 
-  // Função para formatar nome (primeira letra de cada palavra maiúscula)
   const formatNome = (nome) => {
     return nome
       .split(' ')
@@ -49,10 +48,9 @@ const Usuario = () => {
       .join(' ');
   };
 
-  // Função para formatar CPF com máscara xxx.xxx.xxx-xx
   const formatCPF = (cpf) => {
-    cpf = cpf.replace(/\D/g, ''); // Remove caracteres não numéricos
-    if (cpf.length > 11) cpf = cpf.slice(0, 11); // Limita a 11 dígitos
+    cpf = cpf.replace(/\D/g, '');
+    if (cpf.length > 11) cpf = cpf.slice(0, 11);
     
     return cpf
       .replace(/(\d{3})(\d)/, '$1.$2')
@@ -60,12 +58,10 @@ const Usuario = () => {
       .replace(/(\d{3})(\d{1,2})$/, '$1-$2');
   };
 
-  // Verifica se nome contém números
   const nomeContemNumeros = (nome) => {
     return /\d/.test(nome);
   };
 
-  // Valida formato do CPF
   const validaCPF = (cpf) => {
     const cpfLimpo = cpf.replace(/\D/g, '');
     return cpfLimpo.length === 11;
@@ -92,7 +88,7 @@ const Usuario = () => {
 
     setFormData({
       ...formData,
-      [name]: newValue // [name] assume o valor da variável name na requisição.
+      [name]: newValue
     });
 
     setFormErrors({
