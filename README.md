@@ -1,170 +1,147 @@
-# 🏦 Sistema de Simulação Bancária
+# Sistema de Simulação Bancária com JWT
 
-Um sistema completo de simulação bancária desenvolvido com Spring Boot (backend) e React (frontend), que permite gerenciar usuários, contas bancárias e movimentações financeiras.
+Este projeto foi atualizado para incluir autenticação JWT, páginas de login e cadastro.
 
-## 📋 Funcionalidades
+## 🔐 Funcionalidades de Autenticação
 
-- **Gestão de Usuários**: Cadastro, listagem, edição e exclusão de usuários
-- **Gestão de Contas**: Criação e gerenciamento de contas bancárias
-- **Movimentações Financeiras**: Depósitos e saques com controle de saldo
-- **Interface Web Responsiva**: Frontend moderno desenvolvido em React
+### Backend (Spring Boot)
+- **JWT Authentication**: Implementação completa com Spring Security
+- **Registro de usuários**: Endpoint para criar novos usuários
+- **Login**: Autenticação com email e senha
+- **Proteção de rotas**: Todas as APIs principais protegidas por JWT
+- **Criptografia de senhas**: BCrypt para hash de senhas
 
-## 🛠 Tecnologias Utilizadas
+### Frontend (React)
+- **Página de Login**: Interface moderna e responsiva
+- **Página de Cadastro**: Formulário completo com validações
+- **Context de Autenticação**: Gerenciamento global do estado de login
+- **Rotas Protegidas**: Redirecionamento automático para login
+- **Header atualizado**: Exibição do usuário logado e botão de logout
 
-### Backend
-- **Java 17**
-- **Spring Boot 3.4.4**
-- **Spring Data JPA**
-- **MySQL**
-- **Lombok**
-- **Maven**
-
-### Frontend
-- **React 19**
-- **Vite**
-- **Axios**
-- **React Router DOM**
-- **CSS3**
-
-## 📂 Estrutura do Projeto
-
-```
-projetoFullStackSimulaçãoBanco/
-├── backend/                 # API REST em Spring Boot
-│   ├── src/main/java/
-│   │   └── com/augusto/backend/
-│   │       ├── controller/  # Controllers REST
-│   │       ├── domain/      # Entidades JPA
-│   │       ├── repository/  # Repositórios
-│   │       └── services/    # Lógica de negócio
-│   └── src/main/resources/
-│       └── application.properties
-├── frontend/                # Interface em React
-│   ├── src/
-│   │   ├── components/      # Componentes reutilizáveis
-│   │   ├── pages/          # Páginas da aplicação
-│   │   └── services/       # Serviços para API
-│   └── package.json
-└── README.md
-```
-
-## 🗃 Modelo de Dados
-
-O sistema possui três entidades principais:
-
-- **Usuario**: Representa os clientes do banco (nome, CPF, endereço)
-- **Conta**: Contas bancárias associadas aos usuários (número, saldo)
-- **Movimentacao**: Transações financeiras (depósitos/saques) nas contas
-
-## 🚀 Como Executar
+## 🚀 Como executar
 
 ### Pré-requisitos
+- MySQL configurado
+- Node.js instalado
+- Java 17+ instalado
 
-- Java 17+
-- Maven 3.6+
-- Node.js 16+
-- MySQL 8.0+
+### 1. Migração do Banco de Dados
+Execute o script `migration.sql` no seu banco MySQL:
 
-### Configuração do Banco de Dados
+```sql
+-- Script para adicionar colunas de autenticação à tabela usuarios
+ALTER TABLE usuarios 
+ADD COLUMN email VARCHAR(255) UNIQUE,
+ADD COLUMN senha VARCHAR(255);
 
-1. Instale e configure o MySQL
-2. Crie um banco de dados chamado `financeiro` (ou será criado automaticamente)
-3. Configure as credenciais no arquivo `backend/src/main/resources/application.properties`:
-
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/financeiro?createDatabaseIfNotExist=true
-spring.datasource.username=root
-spring.datasource.password=root
+-- Atualizar usuários existentes com dados temporários
+UPDATE usuarios SET 
+    email = CONCAT('user', id, '@temp.com'),
+    senha = '$2a$10$N9qo8uLOickgx2ZMRJWYneIpHjO.LWDDA9XG5DqRGIK2XK9MKj7iy' -- senha: 123456
+WHERE email IS NULL;
 ```
 
-### Executando o Backend
-
+### 2. Executar automaticamente (Windows)
 ```bash
-# Navegue até o diretório do backend
+./start-project.bat
+```
+
+### 3. Executar manualmente
+
+#### Backend
+```bash
 cd backend
-
-# Execute a aplicação
 ./mvnw spring-boot:run
-
-# Ou no Windows
-mvnw.cmd spring-boot:run
 ```
 
-A API estará disponível em: `http://localhost:8080`
-
-### Executando o Frontend
-
+#### Frontend
 ```bash
-# Navegue até o diretório do frontend
 cd frontend
-
-# Instale as dependências
 npm install
-
-# Execute o servidor de desenvolvimento
 npm run dev
 ```
 
-A aplicação web estará disponível em: `http://localhost:5173`
+## 🔑 Credenciais de Teste
 
-## 🔌 Endpoints da API
+Para usuários existentes que foram migrados:
+- **Email**: user[ID]@temp.com (ex: user1@temp.com)
+- **Senha**: 123456
 
-### Usuários
-- `GET /usuarios` - Listar todos os usuários
-- `POST /usuarios` - Criar novo usuário
-- `PUT /usuarios/{id}` - Atualizar usuário
-- `DELETE /usuarios/{id}` - Excluir usuário
+Ou crie uma nova conta na página de cadastro.
 
-### Contas
-- `GET /contas` - Listar todas as contas
-- `POST /contas` - Criar nova conta
-- `PUT /contas/{id}` - Atualizar conta
-- `DELETE /contas/{id}` - Excluir conta
+## 📝 Endpoints da API
 
-### Movimentações
-- `GET /movimentacoes` - Listar todas as movimentações
-- `POST /movimentacoes` - Criar nova movimentação
-- `PUT /movimentacoes/{id}` - Atualizar movimentação
-- `DELETE /movimentacoes/{id}` - Excluir movimentação
+### Autenticação
+- `POST /api/auth/login` - Login de usuário
+- `POST /api/auth/register` - Cadastro de usuário
 
-## 🎯 Como Usar
+### APIs Protegidas (requerem JWT)
+- `GET /api/usuarios` - Listar usuários
+- `POST /api/usuarios` - Criar usuário
+- `PUT /api/usuarios/{id}` - Atualizar usuário
+- `DELETE /api/usuarios/{id}` - Deletar usuário
+- `GET /api/contas` - Listar contas
+- `POST /api/contas` - Criar conta
+- `GET /api/movimentacoes` - Listar movimentações
+- `POST /api/movimentacoes` - Criar movimentação
 
-1. **Cadastre Usuários**: Acesse a página de usuários para cadastrar clientes
-2. **Crie Contas**: Associe contas bancárias aos usuários cadastrados
-3. **Realize Movimentações**: Faça depósitos e saques nas contas criadas
-4. **Acompanhe o Saldo**: Visualize o saldo atualizado após cada movimentação
+## 🔧 Estrutura dos Tokens JWT
 
-## 🚀 Build para Produção
+Os tokens JWT incluem:
+- **Subject**: Email do usuário
+- **Issued At**: Data de criação
+- **Expiration**: 24 horas
+- **Algorithm**: HS256
 
-### Backend
+## 🛡️ Segurança Implementada
+
+1. **Criptografia de senhas** com BCrypt
+2. **Validação de entrada** com Bean Validation
+3. **CORS configurado** para desenvolvimento
+4. **Sessões stateless** com JWT
+5. **Verificação de unicidade** de email e CPF
+6. **Autorização por token** em todas as rotas protegidas
+
+## 📱 Interface do Usuário
+
+### Páginas Criadas
+- `/login` - Página de login
+- `/register` - Página de cadastro
+- Páginas existentes protegidas por autenticação
+
+### Funcionalidades
+- **Formatação automática de CPF** no cadastro
+- **Validação em tempo real** dos formulários
+- **Feedback visual** para erros e sucessos
+- **Design responsivo** e moderno
+- **Persistência de login** com localStorage
+
+## 🔄 Fluxo de Autenticação
+
+1. **Usuário acessa o sistema** → Redirecionado para /login
+2. **Login ou cadastro** → Recebe JWT token
+3. **Token armazenado** no localStorage
+4. **Requests automáticos** incluem Authorization header
+5. **Logout** → Token removido e redirecionamento
+
+## ⚠️ Notas Importantes
+
+- Execute a migração do banco antes de iniciar
+- O token JWT expira em 24 horas
+- Usuários existentes recebem emails temporários (user[ID]@temp.com)
+- A secret key do JWT deve ser alterada em produção
+- CORS está liberado para desenvolvimento
+
+## 🧪 Testes
+
+Os testes existentes foram mantidos. Para executar:
+
 ```bash
+# Backend
 cd backend
-./mvnw clean package
-java -jar target/backend-0.0.1-SNAPSHOT.jar
-```
+./mvnw test
 
-### Frontend
-```bash
+# Frontend
 cd frontend
-npm run build
-```
-
-## 🤝 Contribuindo
-
-1. Faça o fork do projeto
-2. Crie uma branch para sua feature (`git checkout -b feature/AmazingFeature`)
-3. Commit suas mudanças (`git commit -m 'Add some AmazingFeature'`)
-4. Push para a branch (`git push origin feature/AmazingFeature`)
-5. Abra um Pull Request
-
-## 📝 Licença
-
-Este projeto está sob a licença MIT. Veja o arquivo `LICENSE` para mais detalhes.
-
-## 👨‍💻 Autor
-
-Desenvolvido por **Augusto Cesar Rezende**
-
----
-
-⭐ Deixe uma estrela se este projeto foi útil para você! 
+npm test
+``` 
